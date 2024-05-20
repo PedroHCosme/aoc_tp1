@@ -54,42 +54,40 @@ outer_loop:
 	addi t5, t5, -1 # Decrement by 1 for safe indexing
 	
 inner_loop:
-	mv a0, t3
-	li a7, 1
-	ecall
-	mv a0, t4
-	li a7, 1
-	ecall
-	bge t3, t5, end_inner # Break if t3 has reached the upper bound stored in t2
-	# Calculate addresses for t3 and t4 indices
-	
-	slli t6, t3, 2
-	slli a6, t4, 2
-	
-	add t6, t6, a1 # t6 is the address of array[t3]
-	add a6, a6, a1 # a6 is the address of array[t4]
-	
-	lb s2, 0(t6) # Load array[t3]
-	lb s3, 0(a6) # Load array[t4]
-	
-	#Compare and swap if needed
-	ble s2, s3, no_swap
-	sb s2, 0(a6) # Swap operations
-	sb s3, 0(t6)
-	li t1, 1  # Indicate that a swap occurred
+    # Debug prints commented out to ensure they do not disrupt the program logic
+    # mv a0, t3
+    # li a7, 1
+    # ecall
+    # mv a0, t4
+    # li a7, 1
+    # ecall
 
-	li a7, 1 
-	mv a0, s2
-	ecall
-	# Optionally print a separator or newline
-	la a0, space_char
-	li a7, 4       # Syscall for print string
-	ecall
-	
+    bge t3, t5, end_inner  # Break if t3 has reached the upper bound stored in t5
+
+    # Calculate addresses for t3 and t4 indices
+    slli t6, t3, 2
+    slli a6, t4, 2
+
+    add t6, t6, a1  # t6 is the address of array[t3]
+    add a6, a6, a1  # a6 is the address of array[t4]
+    
+    lb s2, 0(t6)  # Load word from array[t3]
+    lb s3, 0(a6)  # Load word from array[t4]
+    # Compare and swap if needed
+    ble s2, s3, no_swap
+    sb s3, 0(t6)  # Swap operations: store s3 into array[t3]
+    sb s2, 0(a6)  # Swap operations: store s2 into array[t4]
+    li t1, 1  # Indicate that a swap occurred
+
+    # Optionally print a separator or newline (for debugging)
+    # la a0, space_char
+    # li a7, 4       # Syscall for print string
+    # ecall
+
 no_swap:
-	addi t3, t3, 1 # Increment t3
-	addi t4, t4, 1 # Increment t4
-	j inner_loop # Jump back to the start of inner_loop
+    addi t3, t3, 1  # Increment t3
+    addi t4, t4, 1  # Increment t4
+    j inner_loop    # Jump back to the start of inner_loop
 	
 end_inner:
 	beqz t1, reset_index # If no swaps occurred, array is sorted
