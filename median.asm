@@ -54,12 +54,12 @@ outer_loop:
 
 inner_loop:
     addi a3, a0, 4    # Load address of next float into a3
-    flw fa1, 0(a0)     # Load current float into f1
-    flw fa2, 0(a3)     # Load next float into f2
-    flt.s  t1, fa1, fa2  # Compare f1 and f2 (f1 <= f2)
-    bnez t1, no_swap  # No swap needed if f1 <= f2
+    flw fa1, 0(a0)     # Load current float into fa1
+    flw fa2, 0(a3)     # Load next float into fa2
+    flt.s t1, fa1, fa2  # Compare fa1 and fa2 (fa1 < fa2)
+    bne  t1, zero, no_swap  # No swap needed if fa1 < fa2
 
-    # Swap f1 and f2
+    # Swap fa1 and fa2
     fsw fa2, 0(a0)
     fsw fa1, 0(a3)
 
@@ -90,7 +90,7 @@ print_loop:
     addi t0, t0, 1   # Increment index
     blt t0, t2, print_loop  # Loop back if more floats are to be printed
     
-# Calcular a mediana
+# Calculate median
 li t3, 0            # Initialize median index
 srai t3, t2, 1      # t3 = t2 / 2
 
@@ -98,14 +98,40 @@ la a0, median_float  # load address of median_float into a0
 li a7, 4           # syscall for print string
 ecall 
 
+# Check if the array size is even or odd
+andi t4, t2, 1      # t4 = t2 & 1 (checks if the array size is odd)
+beqz t4, even_array # If t4 is 0, the array size is even
 
-
-#If the array size is odd
+# If the array size is odd
 odd_array:
     la a1, array
-    slli t3, t3, 2      # t3 = t3*4 --> Convert the integer value into bytes
+    slli t3, t3, 2      # t3 = t3 * 4 --> Convert the integer value into bytes
     add a0, a1, t3      # Gets the median float's address
-    flw fa0, 0(a0)       # Load median value
+    flw fa0, 0(a0)      # Load median value
+
+    li a7, 2            # syscall to print float
+    ecall
+
+    # Exit the program
+    li a7, 10           # syscall for exit
+    ecall
+
+# If the array size is even
+even_array:
+    la a1, array
+    slli t3, t3, 2      # t3 = t3 * 4 --> Convert the integer value into bytes
+    add a0, a1, t3      # Get the second median float's address
+    flw fa0, 0(a0)      # Load the second median value
+
+    addi t3, t3, -4      # Decrement t3 by 4 to get the previous float's address
+    add a0, a1, t3      # Get the first median float's address
+    flw fa1, 0(a0)      # Load the first median value
+
+    fadd.s fa0, fa0, fa1  # fa0 = fa0 + fa1 (sum the two median values)
+    li t1, 0x40000000    # 2 in IIEEE734
+    fmv.s.x fa1, t1      # Move bit pattern to fa1
+
+    fdiv.s fa0, fa0, fa1   # Divide by 2
 
     li a7, 2            # syscall to print float
     ecall
