@@ -6,6 +6,8 @@ space_char:
     .string " "
 array_size:
     .string "Insert array size\n"
+median_integer:
+    .string "\nMedian: "
 array:
     .word 4000  # Allocate space for the array, must be a multiple of 4
 
@@ -86,9 +88,28 @@ print_loop:
     addi a1, a1, 4   # Move to the next integer in the array
     addi t0, t0, 1   # Increment index
     blt t0, t2, print_loop  # Loop back if more integers are to be printed
-
-    # Exit the program
-    li a7, 10        # syscall for exit
-    ecall
     
-# BILU BILU
+# Calcular a mediana
+li t3, 0            # Initialize median index
+srai t3, t2, 1      # t3 = t2 / 2 --> Tell the code if the array is even or odd
+
+la a0, median_integer  # load address of median_integer into a0
+li a7, 4           # syscall for print string
+ecall
+
+#beqz t3, even_array
+
+#even_array:
+
+#If the array is odd
+odd_array:
+    la a1, array
+    slli t3, t3, 2      # t3 = t3 * 4 (converter índice para deslocamento de bytes)
+    add a0, a1, t3      # Get the median integer's address
+    lw a0, 0(a0)        # Load median value
+
+    li a7, 1            # syscall to print integer
+    ecall
+	
+li a7, 10        # syscall to exit
+ecall
