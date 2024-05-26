@@ -7,7 +7,7 @@ space_char:
 array_size:
     .string "Insert array size\n"
 array:
-    .space 1000  # Allocate space for the array, must be a multiple of 4
+    .word 4000  # Allocate space for the array, must be a multiple of 4
 
 .text
 .globl main
@@ -33,7 +33,7 @@ input_loop:
     li a7, 5           # syscall for read integer from user
     ecall
     
-    sb a0, 0(a1)       # Store the integer into the array at current index
+    sw a0, 0(a1)       # Store the integer into the array at current index
     
     addi a1, a1, 4     # Move to the next integer space in the array
     addi t0, t0, 1     # Increment the index
@@ -43,19 +43,22 @@ input_loop:
     la a1, array
 
     li s1, 0          # Initialize outer loop counter
+    
+addi t2, t2, -1 # Force the array being the wanted size  <--------------- Foi umas 3 hora pra resolver com uma linha
+
 outer_loop:
     li s2, 0          # Initialize inner loop counter
     la a0, array      # Load address of array into a0
 
 inner_loop:
     addi a3, a0, 4    # Load address of next integer into a3
-    lb t0, 0(a0)      # Load current integer's bytes of array into t0
-    lb t1, 0(a3)      # Load next integer's bytes of array into t1
+    lw t0, 0(a0)      # Load current integer's bytes of array into t0
+    lw t1, 0(a3)      # Load next integer's bytes of array into t1
     blt t0, t1, no_swap
 
     # Swap t0 and t1
-    sb t1, 0(a0)
-    sb t0, 0(a3)
+    sw t1, 0(a0)
+    sw t0, 0(a3)
 
 no_swap:
     addi a0, a0, 4    # Move to the next integer in the array
@@ -69,8 +72,10 @@ no_swap:
     la a1, array     # Reset array address for printing
     li t0, 0         # Reset index
 
+addi t2, t2, 1
+
 print_loop:
-    lb a0, 0(a1)     # Load integer from array byte by byte
+    lw a0, 0(a1)     # Load integer from array byte by byte
     li a7, 1         # syscall to print integer
     ecall
     
