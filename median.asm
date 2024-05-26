@@ -104,7 +104,7 @@ ecall
 #If the array is odd
 odd_array:
     la a1, array
-    slli t3, t3, 2      # t3 = t3 * 4 (converter índice para deslocamento de bytes)
+    slli t3, t3, 2      # t3 = t3*4 --> Convert the integer value into bytes
     add a0, a1, t3      # Get the median integer's address
     lw a0, 0(a0)        # Load median value
 
