@@ -30,7 +30,7 @@ main:
     li t0, 0           # Initialize the index of the array to 0
 
     la a0, str         # Load the address of the string into a0
-    li a7, 4           # System call number for print string
+    li a7, 4              # System call number for print string
     ecall              # Execute system call
 
 # Input loop for reading floats from the user
