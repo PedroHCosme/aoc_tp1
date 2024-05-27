@@ -12,7 +12,7 @@ int main() {
     scanf("%d", &n);
 
     // Lendo os itens no array a
-    printf("Insira %d valores:\n", n);
+    printf("Insira os valores:\n", n);
     for (i = 0; i < n; i++) {
         scanf("%f", &a[i]);
     }

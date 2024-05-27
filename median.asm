@@ -1,13 +1,13 @@
 .data
 .align 2          # Align the following data to a word boundary (4 bytes)
 str:
-    .string "Enter a float\n"  # String to prompt user for float input
+    .string "Insira os valores\n"  # String to prompt user for float input
 space_char:
     .string " "  # String for a space character
 array_size:
-    .string "Insert array size\n"  # String to prompt user for array size
+    .string "Quantidade de itens: \n"  # String to prompt user for array size
 median_float:
-    .string "\nMedian: "  # String to print before the median value
+    .string "\nMediana: "  # String to print before the median value
 array:
     .word 4000   # Allocate space for the array, enough for 1000 floats (4 bytes each)
 
@@ -29,11 +29,12 @@ main:
     
     li t0, 0           # Initialize the index of the array to 0
 
-# Input loop for reading floats from the user
-input_loop:
     la a0, str         # Load the address of the string into a0
     li a7, 4           # System call number for print string
     ecall              # Execute system call
+
+# Input loop for reading floats from the user
+input_loop:
     
     li a7, 6           # System call number for read float from user
     ecall              # Execute system call
