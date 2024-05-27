@@ -23,9 +23,13 @@ main:
     
     li a7, 5           # syscall for read integer from user
     ecall
+    li t5, 1
+    beq a0, t5, one_space_array
     mv t2, a0          # move input (array size) from a0 to t2
     
+    
     li t0, 0           # index of the array
+    
 
 input_loop:
     la a0, str         # load address of string into a0
@@ -46,7 +50,7 @@ input_loop:
 
     li s1, 0          # Initialize outer loop counter
 
-addi t2, t2, -1   # Force the array being the wanted size
+addi t2, t2, -1   # Force the array being the wanted size    
 
 outer_loop:
     li s2, 0          # Initialize inner loop counter
@@ -129,7 +133,7 @@ even_array:
 
     fadd.s fa0, fa0, fa1  # fa0 = fa0 + fa1 (sum the two median values)
     li t1, 0x40000000    # 2 in IIEEE734
-    fmv.s.x fa1, t1      # Move bit pattern to fa1
+    fmv.s.x fa1, t1      # Move value from t1 to fa1
 
     fdiv.s fa0, fa0, fa1   # Divide by 2
 
@@ -138,4 +142,24 @@ even_array:
 
     # Exit the program
     li a7, 10           # syscall for exit
+    ecall
+    
+one_space_array:
+    la a0, str         # load address of string into a0
+    li a7, 4           # syscall for print string
+    ecall
+    
+    
+    li a7, 6          # syscall for read float from user
+    ecall
+    
+    la a0, median_float #syscall to print median_float
+    li a7, 4
+    ecall
+    
+    fsw fa0, 0(a1)      # Store the float into the array at current index
+    li a7, 2 #print the float value
+    ecall
+    
+    li a7, 10 #exit the code
     ecall
