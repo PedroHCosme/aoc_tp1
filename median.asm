@@ -8,6 +8,8 @@ array_size:
     .string "Quantidade de itens: \n"  # String to prompt user for array size
 median_float:
     .string "\nMediana: "  # String to print before the median value
+order_values:
+    .string "Valores ordenados:\n"
 array:
     .word 4000   # Allocate space for the array, enough for 1000 floats (4 bytes each)
 
@@ -84,6 +86,11 @@ no_swap:
 addi t2, t2, 1
 
 # Loop for printing the sorted array
+
+la a0, order_values # Load addres of ordenated_values string
+li a7, 4                # System call number for print string
+ecall                   # Execute system call
+
 print_loop:
     flw fa0, 0(a1)     # Load float from array
     li a7, 2           # System call number to print float
@@ -153,6 +160,14 @@ one_space_array:
     ecall              # Execute system call
     
     li a7, 6           # System call number for read float from user
+    ecall              # Execute system call
+    
+    la a0, order_values # Load addres of ordenated_values string
+    li a7, 4                # System call number for print string
+    ecall                   # Execute system call
+    
+    fsw fa0, 0(a1)     # Store the float into the array at current index
+    li a7, 2           # System call number to print the float value
     ecall              # Execute system call
     
     la a0, median_float # Load address of median_float string
